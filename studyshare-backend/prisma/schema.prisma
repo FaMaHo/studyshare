@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model University {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String
+  type        String
+  faculties   Faculty[]
+}
+
+model Faculty {
+  id           Int        @id @default(autoincrement())
+  name         String
+  university   University @relation(fields: [universityId], references: [id])
+  universityId Int
+  subjects     Subject[]
+}
+
+model Subject {
+  id         Int      @id @default(autoincrement())
+  name       String
+  faculty    Faculty  @relation(fields: [facultyId], references: [id])
+  facultyId  Int
+  notes      Note[]
+}
+
+model Note {
+  id         Int      @id @default(autoincrement())
+  fileName   String
+  fileType   String
+  fileSize   Int
+  fileData   String   // base64 or file URL
+  professor  String
+  semester   String
+  uploadedAt DateTime @default(now())
+  subject    Subject  @relation(fields: [subjectId], references: [id])
+  subjectId  Int
+}
