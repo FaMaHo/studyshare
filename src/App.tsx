@@ -1,7 +1,7 @@
-import './App.css'
-import { useState, useEffect } from 'react'
-import AddNoteModal from './AddNoteModal'
-import { getUniversities, getNotes, addUniversity, addFaculty, addSubject, addNote } from './api';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import AddNoteModal from "./components/AddNoteModal";
+import { getUniversities, getNotes, addUniversity, addFaculty, addSubject, addNote } from "./api/api";
 
 // Define Note type for notes state
 interface Note {

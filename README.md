@@ -254,27 +254,27 @@ npm start
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+This is a personal project developed with AI assistance. While contributions are welcome, please note that this project was primarily developed as a learning exercise and demonstration of modern web development practices.
 
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## �� Acknowledgments
 
-- React team for the amazing framework
-- Vite team for the fast build tool
-- Prisma team for the excellent ORM
-- Tailwind CSS for the utility-first CSS framework
+- **React team** for the amazing framework
+- **Vite team** for the fast build tool
+- **Prisma team** for the excellent ORM
+- **Tailwind CSS** for the utility-first CSS framework
+- **OpenAI/Cursor AI** for AI-powered development assistance
+- **GitHub** for providing excellent tools for open source development
 
 ## 📞 Support
 
-If you have any questions or need help, please open an issue on GitHub or contact us at support@studyshare.com.
+If you have any questions or need help, please open an issue on GitHub.
 
 ---
 
-**Made with ❤️ by the StudyShare Team**
+**Made with ❤️ by Fateme Hosseini**
+
+*This project was developed with the assistance of AI tools for educational and demonstration purposes.*

@@ -1,35 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { addUniversity, addFaculty, addSubject, addNote, getUniversities } from './api';
-
-interface Subject {
-  id: number;
-  name: string;
-}
-interface Faculty {
-  id: number;
-  name: string;
-  subjects: Subject[];
-}
-interface University {
-  id: number;
-  name: string;
-  description: string;
-  type: string;
-  faculties: Faculty[];
-}
-
-interface Note {
-  university: string;
-  faculty: string;
-  subject: string;
-  professor: string;
-  semester: string;
-  fileName: string;
-  fileSize: number;
-  fileType: string;
-  fileData: string; // base64
-  uploadedAt: number;
-}
+import { addUniversity, addFaculty, addSubject, addNote, getUniversities } from '../api/api';
+import type { University, Faculty, Subject, Note } from '../types';
+import { UNIVERSITY_TYPES, ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from '../types';
 
 interface AddNoteModalProps {
   open: boolean;
@@ -39,25 +11,9 @@ interface AddNoteModalProps {
   refreshNotes: () => void;
 }
 
-const universityTypes = [
-  'Technical',
-  'Medical',
-  'Economic',
-  'Arts',
-  'Law',
-  'Other',
-];
 
-const allowedFileTypes = [
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.ms-powerpoint',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  'text/plain',
-];
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
 
 const AddNoteModal: React.FC<AddNoteModalProps> = ({ open, onClose, universities, refreshUniversities, refreshNotes }) => {
   const [localUniversities, setLocalUniversities] = useState<University[]>(universities);
@@ -70,7 +26,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({ open, onClose, universities
   const [newUni, setNewUni] = useState({
     name: '',
     description: '',
-    type: universityTypes[0],
+    type: UNIVERSITY_TYPES[0],
   });
   const [newFaculty, setNewFaculty] = useState('');
   const [newSubject, setNewSubject] = useState('');
@@ -113,7 +69,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({ open, onClose, universities
       refreshUniversities();
       const newUniObj = updatedUniversities.find((u: University) => u.name === newUni.name);
       setSelectedUniId(newUniObj?.id || null);
-      setNewUni({ name: '', description: '', type: universityTypes[0] });
+      setNewUni({ name: '', description: '', type: UNIVERSITY_TYPES[0] });
       setShowAddUni(false);
       setError('');
     } catch (error) {
@@ -176,7 +132,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({ open, onClose, universities
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (!allowedFileTypes.includes(f.type)) {
+    if (!ALLOWED_FILE_TYPES.includes(f.type as any)) {
       setError('Invalid file type. Allowed: PDF, DOC, PPT, TXT.');
       setFile(null);
       setFilePreview(null);
@@ -313,11 +269,11 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({ open, onClose, universities
                 id="universityType"
                 name="type"
                 value={newUni.type}
-                onChange={e => setNewUni({ ...newUni, type: e.target.value })}
+                onChange={e => setNewUni({ ...newUni, type: e.target.value as any })}
                 style={{ padding: '0.5rem', borderRadius: 6, border: '1px solid #e2e8f0', fontSize: 15 }}
                 autoComplete="off"
               >
-                {universityTypes.map(type => (
+                {UNIVERSITY_TYPES.map(type => (
                   <option key={type} value={type}>{type}</option>
                 ))}
               </select>
