@@ -260,7 +260,7 @@ This is a personal project developed with AI assistance. While contributions are
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## �� Acknowledgments
+## 🙏 Acknowledgments
 
 - **React team** for the amazing framework
 - **Vite team** for the fast build tool
