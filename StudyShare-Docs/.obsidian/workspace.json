@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Development/Daily Logs.md",
+                "file": "Planning/Roadmap.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Daily Logs"
+              "title": "Roadmap"
             }
           }
         ]
@@ -170,13 +170,13 @@
   },
   "active": "f0215d5b58943cf1",
   "lastOpenFiles": [
-    "Development/Bug Reports.md",
-    "Development/Daily Logs.md",
-    "Planning/Roadmap.md",
-    "Project Overview/Project Goals.md",
-    "Project Overview/Tech Stack.md",
-    "Development/Feature Implementation.md",
     "Planning/Production Deployment Plan.md",
-    "Planning/Telegram Integration Plan.md"
+    "Planning/Telegram Integration Plan.md",
+    "Project Overview/Tech Stack.md",
+    "Planning/Roadmap.md",
+    "Development/Daily Logs.md",
+    "Development/Bug Reports.md",
+    "Project Overview/Project Goals.md",
+    "Development/Feature Implementation.md"
   ]
 }
