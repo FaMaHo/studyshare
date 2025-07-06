@@ -11,6 +11,9 @@ A modern web application for sharing and managing academic notes, built with Rea
 - **🎨 Modern UI**: Beautiful glass-morphism design with responsive layout
 - **⚡ Real-time Updates**: Instant updates when adding/editing content
 - **🔒 Data Validation**: Comprehensive input validation and error handling
+- **🌐 Production Ready**: Domain deployment with PostgreSQL database
+- **📱 Telegram Integration**: Bot and channel integration (planned)
+- **🔄 Bidirectional Sync**: Website ↔ Telegram file synchronization (planned)
 
 ## 🛠️ Tech Stack
 
@@ -24,7 +27,8 @@ A modern web application for sharing and managing academic notes, built with Rea
 - **Node.js** with Express.js
 - **TypeScript** for type safety
 - **Prisma ORM** for database management
-- **SQLite** database (can be easily switched to PostgreSQL/MySQL)
+- **SQLite** database (development) / **PostgreSQL** (production)
+- **Telegram Bot API** integration (planned)
 
 ### Development Tools
 - **ESLint** for code linting
@@ -63,8 +67,9 @@ StudyShare/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (v16 or higher)
+- Node.js (v18 or higher)
 - npm or yarn
+- Git
 
 ### Installation
 
@@ -112,6 +117,42 @@ StudyShare/
    - Backend API: http://localhost:4000
    - Database UI: http://localhost:5555 (Prisma Studio)
 
+## 🚀 Production Deployment
+
+### Domain Setup
+- Register domain (e.g., studyshare.app)
+- Configure SSL certificates
+- Set up DNS records
+
+### Database Migration
+- Migrate from SQLite to PostgreSQL
+- Configure production environment variables
+- Set up automated backups
+
+### Deployment Platforms
+- **Frontend**: Vercel with custom domain
+- **Backend**: Railway with PostgreSQL
+- **File Storage**: AWS S3 with CDN
+- **Monitoring**: Sentry for error tracking
+
+## 📱 Telegram Integration (Planned)
+
+### Bot Features
+- File upload and download
+- Search and filtering capabilities
+- User authentication via Telegram
+- Automated channel posting
+
+### Channel Organization
+- Hierarchical structure (University → Faculty → Subject)
+- Automated file categorization
+- Real-time synchronization with website
+
+### Sync Capabilities
+- **Website → Telegram**: Files uploaded on website automatically posted to channel
+- **Telegram → Website**: Files sent to bot automatically uploaded to website
+- **Bidirectional**: Real-time synchronization between platforms
+
 ## 📚 API Documentation
 
 ### Universities
@@ -132,6 +173,7 @@ StudyShare/
 
 ## 🗄️ Database Schema
 
+### Development (SQLite)
 ```sql
 -- Universities table
 CREATE TABLE University (
@@ -169,6 +211,25 @@ CREATE TABLE Note (
   uploadedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   subjectId INTEGER NOT NULL,
   FOREIGN KEY (subjectId) REFERENCES Subject(id)
+);
+```
+
+### Production (PostgreSQL) - Planned
+```sql
+-- Additional fields for production
+ALTER TABLE notes ADD COLUMN telegram_file_id VARCHAR(255);
+ALTER TABLE notes ADD COLUMN telegram_message_id INTEGER;
+ALTER TABLE notes ADD COLUMN sync_status VARCHAR(50) DEFAULT 'synced';
+
+-- Telegram users table
+CREATE TABLE telegram_users (
+  id SERIAL PRIMARY KEY,
+  telegram_id BIGINT UNIQUE NOT NULL,
+  username VARCHAR(255),
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  website_user_id INTEGER REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT NOW()
 );
 ```
 
@@ -268,6 +329,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Tailwind CSS** for the utility-first CSS framework
 - **OpenAI/Cursor AI** for AI-powered development assistance
 - **GitHub** for providing excellent tools for open source development
+
+## 📚 Documentation
+
+- **README.md** - This file (project overview and setup)
+- **docs/API.md** - Complete API documentation
+- **docs/DEVELOPMENT.md** - Development guide and best practices
+- **StudyShare-Docs/** - Obsidian vault with project planning and progress tracking
 
 ## 📞 Support
 
