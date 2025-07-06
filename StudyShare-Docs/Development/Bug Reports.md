@@ -113,6 +113,72 @@ Missing proper error handling middleware and specific error responses.
 
 ---
 
+### 3. CI/CD Pipeline Dependency Conflict ✅
+
+**Status:** Resolved 
+**Priority:** High 
+**Date Reported:** July 6, 2025 
+**Date Resolved:** July 6, 2025
+
+**Description:** GitHub Actions CI/CD pipeline was failing with ERESOLVE dependency conflicts related to TypeScript ESLint packages. The pipeline could not run `npm ci` due to conflicting peer dependencies between different versions of @typescript-eslint packages.
+
+**Steps to Reproduce:**
+
+1. Push code changes to GitHub repository
+2. GitHub Actions workflow triggers
+3. CI/CD pipeline fails during `npm ci` step
+4. Error shows conflicting versions of @typescript-eslint/eslint-plugin and @typescript-eslint/parser
+
+**Expected Behavior:** CI/CD pipeline should complete successfully, running tests and deploying without dependency conflicts.
+
+**Actual Behavior:** Pipeline failed with ERESOLVE error showing conflicts between:
+
+- @typescript-eslint/eslint-plugin@^6.14.0 (specified in package.json)
+- @typescript-eslint/eslint-plugin@8.35.1 (pulled in by typescript-eslint package)
+- Incompatible peer dependency @typescript-eslint/parser versions
+
+**Environment:**
+
+- GitHub Actions runner: Ubuntu latest
+- Node.js: 18.x and 20.x (matrix build)
+- Package manager: npm
+- Project: React + TypeScript + Vite
+
+**Root Cause:** Conflicting TypeScript ESLint package versions in package.json. The project specified older versions (^6.14.0) while a newer typescript-eslint package was pulling in version 8.35.1, creating peer dependency conflicts that npm couldn't resolve.
+
+**Solution:**
+
+1. **Updated TypeScript ESLint packages** to compatible versions:
+    - Updated @typescript-eslint/eslint-plugin from ^6.14.0 to ^7.0.0
+    - Updated @typescript-eslint/parser from ^6.14.0 to ^7.0.0
+2. **Cleaned dependency resolution**:
+    - Removed package-lock.json to clear cached resolutions
+    - Ran `npm install` to regenerate with correct dependencies
+3. **Fixed TypeScript configuration**:
+    - Removed invalid `erasableSyntaxOnly` option from tsconfig.node.json
+4. **Added missing Vite dependencies**:
+    - Installed vite, @vitejs/plugin-react, vitest for proper build setup
+
+**Files Modified:**
+
+- `package.json` - Updated TypeScript ESLint package versions
+- `package-lock.json` - Regenerated with resolved dependencies
+- `tsconfig.node.json` - Removed invalid compiler option
+
+**Testing:**
+
+- Verified local `npm install` works without conflicts
+- Confirmed `npm ci` works in clean environment
+- Tested that CI/CD pipeline completes successfully
+- Validated that test commands work properly with vitest
+
+**Prevention:**
+
+- Use `npm ls` to check for dependency conflicts before pushing
+- Keep TypeScript ESLint packages at compatible versions
+- Use `--legacy-peer-deps` flag when needed for temporary fixes
+- Regular dependency updates to avoid version drift
+
 ## 📝 Bug Report Template
 
 ### Bug Title
