@@ -539,174 +539,362 @@ function App() {
               </select>
               <button onClick={clearFilters} style={{ padding: '0.5rem 1.2rem', borderRadius: 8, border: 'none', background: 'var(--secondary)', color: '#fff', fontWeight: 600, fontSize: 16, cursor: 'pointer', marginLeft: 8 }}>Clear Filters</button>
             </div>
-            {/* Notes Section */}
-            <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto 3rem auto' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                <h2 style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', letterSpacing: '-0.5px', margin: 0 }}>
-                  <span role="img" aria-label="notes">📚</span> Notes
-                </h2>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} style={{ padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16, minWidth: 120 }}>
-                  <option value="newest">Newest</option>
-                  <option value="oldest">Oldest</option>
-                  <option value="az">A–Z</option>
-                  <option value="za">Z–A</option>
-                </select>
-              </div>
-              {sortedNotes.length === 0 ? (
-                <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
-                  No notes found. Try adjusting your filters or search.
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-                  {sortedNotes.map(note => (
-                    <div
-                      className="glass-card"
-                      key={note.uploadedAt + note.fileName}
-                      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer', position: 'relative' }}
-                      onClick={() => handleNoteClick(note)}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`View details for note ${note.fileName}`}
-                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleNoteClick(note) }}
-                    >
-                      <div style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--primary)' }}>
-                        {getFileTypeBadge(note.fileType)}
-                        {getFileNameWithoutExtension(note.fileName)}
+            
+            {/* Check if there's active search or filters */}
+            {(() => {
+              const hasActiveSearch = search.trim() !== '';
+              const hasActiveFilters = filterUniversity || filterFaculty || filterSubject || filterFileType;
+              const showNotesFirst = hasActiveSearch || hasActiveFilters;
+              
+              return (
+                <>
+                  {/* Conditional Layout: Notes first if searching/filtering, Universities first otherwise */}
+                  {showNotesFirst ? (
+                    <>
+                      {/* Notes Section - shown first when searching/filtering */}
+                      <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto 3rem auto' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                          <h2 style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', letterSpacing: '-0.5px', margin: 0 }}>
+                            <span role="img" aria-label="notes">📚</span> Notes
+                          </h2>
+                          <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} style={{ padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16, minWidth: 120 }}>
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="az">A–Z</option>
+                            <option value="za">Z–A</option>
+                          </select>
+                        </div>
+                        {sortedNotes.length === 0 ? (
+                          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                            No notes found. Try adjusting your filters or search.
+                          </div>
+                        ) : (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+                            {sortedNotes.map(note => (
+                              <div
+                                className="glass-card"
+                                key={note.uploadedAt + note.fileName}
+                                style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer', position: 'relative' }}
+                                onClick={() => handleNoteClick(note)}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`View details for note ${note.fileName}`}
+                                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleNoteClick(note) }}
+                              >
+                                <div style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--primary)' }}>
+                                  {getFileTypeBadge(note.fileType)}
+                                  {getFileNameWithoutExtension(note.fileName)}
+                                </div>
+                                <div style={{ color: '#232946', fontSize: '1rem' }}>
+                                  <span role="img" aria-label="university">🎓</span> {note.university} &nbsp;|&nbsp;
+                                  <span role="img" aria-label="faculty">🏫</span> {note.faculty} &nbsp;|&nbsp;
+                                  <span role="img" aria-label="subject">📚</span> {note.subject}
+                                </div>
+                                <div style={{ color: '#555', fontSize: '0.98rem' }}>
+                                  <span role="img" aria-label="prof">👨‍🏫</span> {note.professor} &nbsp;|&nbsp;
+                                  <span role="img" aria-label="semester">🗓️</span> {note.semester}
+                                </div>
+                                <div style={{ color: '#888', fontSize: '0.95rem' }}>
+                                  Uploaded: {new Date(note.uploadedAt).toLocaleString()}
+                                </div>
+                                <div style={{ color: '#888', fontSize: '0.95rem' }}>
+                                  Size: {(note.fileSize / 1024).toFixed(1)} KB
+                                </div>
+                                <a href={note.fileData} download={note.fileName} style={{ color: 'var(--secondary)', fontWeight: 500, marginTop: 4, textDecoration: 'underline', fontSize: '1rem' }}>
+                                  Download
+                                </a>
+                                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                                  <button
+                                    onClick={e => { e.stopPropagation(); handleEditNote(note) }}
+                                    style={{
+                                      background: 'none',
+                                      color: '#888',
+                                      border: 'none',
+                                      borderRadius: 4,
+                                      padding: '0.2rem 0.5rem',
+                                      fontWeight: 500,
+                                      fontSize: 13,
+                                      cursor: 'pointer',
+                                      textDecoration: 'underline',
+                                      transition: 'color 0.2s',
+                                    }}
+                                    onMouseOver={e => (e.currentTarget.style.color = 'var(--primary)')}
+                                    onMouseOut={e => (e.currentTarget.style.color = '#888')}
+                                    aria-label={`Edit note ${note.fileName}`}
+                                  >Edit</button>
+                                  <button
+                                    onClick={e => { e.stopPropagation(); handleDeleteNote(note) }}
+                                    style={{
+                                      background: 'none',
+                                      color: '#bbb',
+                                      border: 'none',
+                                      borderRadius: 4,
+                                      padding: '0.2rem 0.5rem',
+                                      fontWeight: 500,
+                                      fontSize: 13,
+                                      cursor: 'pointer',
+                                      textDecoration: 'underline',
+                                      transition: 'color 0.2s',
+                                    }}
+                                    onMouseOver={e => (e.currentTarget.style.color = '#e11d48')}
+                                    onMouseOut={e => (e.currentTarget.style.color = '#bbb')}
+                                    aria-label={`Delete note ${note.fileName}`}
+                                  >Delete</button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {/* Edit Note Modal/Inline Form */}
+                        {editNote && (
+                          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(36,41,70,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="glass-card" style={{ minWidth: 340, maxWidth: 400, padding: '2rem', position: 'relative' }}>
+                              <button onClick={() => setEditNote(null)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#232946' }} aria-label="Close edit note modal">×</button>
+                              <h2 style={{ marginBottom: '1rem', fontWeight: 700, fontSize: '1.2rem', color: 'var(--primary)' }}>
+                                <span role="img" aria-label="edit">✏️</span> Edit Note
+                              </h2>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <label htmlFor="editFileName">File Name</label>
+                                <input id="editFileName" name="fileName" type="text" value={editForm.fileName} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
+                                <label htmlFor="editProfessor">Professor</label>
+                                <input id="editProfessor" name="professor" type="text" value={editForm.professor} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
+                                <label htmlFor="editSemester">Semester/Year</label>
+                                <input id="editSemester" name="semester" type="text" value={editForm.semester} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
+                                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                                  <button onClick={handleEditFormSave} style={{ background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Save</button>
+                                  <button onClick={() => setEditNote(null)} style={{ background: '#e11d48', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {/* Delete Confirmation Modal */}
+                        {showDeleteConfirm && (
+                          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(36,41,70,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="glass-card" style={{ minWidth: 320, maxWidth: 380, padding: '2rem', position: 'relative', textAlign: 'center' }}>
+                              <h2 style={{ marginBottom: '1rem', fontWeight: 700, fontSize: '1.2rem', color: '#e11d48' }}>
+                                <span role="img" aria-label="delete">🗑️</span> Delete Note
+                              </h2>
+                              <div style={{ marginBottom: '1.5rem' }}>Are you sure you want to delete <b>{showDeleteConfirm.fileName}</b>?</div>
+                              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                                <button onClick={confirmDeleteNote} style={{ background: '#e11d48', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Delete</button>
+                                <button onClick={cancelDeleteNote} style={{ background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Cancel</button>
+                              </div>
+                              <button onClick={cancelDeleteNote} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#232946' }} aria-label="Close delete confirmation modal">×</button>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div style={{ color: '#232946', fontSize: '1rem' }}>
-                        <span role="img" aria-label="university">🎓</span> {note.university} &nbsp;|&nbsp;
-                        <span role="img" aria-label="faculty">🏫</span> {note.faculty} &nbsp;|&nbsp;
-                        <span role="img" aria-label="subject">📚</span> {note.subject}
+                      
+                      {/* Universities Section - shown second when searching/filtering */}
+                      <h2 style={{ width: '100%', maxWidth: 1200, margin: '0 auto 1.5rem auto', fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', letterSpacing: '-0.5px' }}>
+                        <span role="img" aria-label="university">🎓</span> Universities
+                      </h2>
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '2rem',
+                        width: '100%',
+                        maxWidth: '1200px',
+                      }}>
+                        {universities.map((uni, idx) => (
+                          <div
+                            key={uni.name}
+                            className="glass-card"
+                            style={{ padding: '2rem', minHeight: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}
+                            onClick={() => handleUniversityClick(uni)}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`View details for ${uni.name}`}
+                            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleUniversityClick(uni) }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                              <span style={{ fontSize: '2rem' }} role="img" aria-label="university">🎓</span>
+                              <span style={{ fontWeight: 600, fontSize: '1.25rem' }}>{uni.name}</span>
+                            </div>
+                            <div style={{ color: '#555', fontSize: '1rem', marginBottom: '1rem' }}>{uni.description}</div>
+                            <div style={{ display: 'flex', gap: '1.5rem', fontSize: '1rem', color: '#4f46e5', alignItems: 'center' }}>
+                              <span title="Type"><span role="img" aria-label="type">🏷️</span> {uni.type}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div style={{ color: '#555', fontSize: '0.98rem' }}>
-                        <span role="img" aria-label="prof">👨‍🏫</span> {note.professor} &nbsp;|&nbsp;
-                        <span role="img" aria-label="semester">🗓️</span> {note.semester}
+                    </>
+                  ) : (
+                    <>
+                      {/* Universities Section - shown first when not searching/filtering */}
+                      <h2 style={{ width: '100%', maxWidth: 1200, margin: '0 auto 1.5rem auto', fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', letterSpacing: '-0.5px' }}>
+                        <span role="img" aria-label="university">🎓</span> Universities
+                      </h2>
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '2rem',
+                        width: '100%',
+                        maxWidth: '1200px',
+                      }}>
+                        {universities.map((uni, idx) => (
+                          <div
+                            key={uni.name}
+                            className="glass-card"
+                            style={{ padding: '2rem', minHeight: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}
+                            onClick={() => handleUniversityClick(uni)}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`View details for ${uni.name}`}
+                            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleUniversityClick(uni) }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                              <span style={{ fontSize: '2rem' }} role="img" aria-label="university">🎓</span>
+                              <span style={{ fontWeight: 600, fontSize: '1.25rem' }}>{uni.name}</span>
+                            </div>
+                            <div style={{ color: '#555', fontSize: '1rem', marginBottom: '1rem' }}>{uni.description}</div>
+                            <div style={{ display: 'flex', gap: '1.5rem', fontSize: '1rem', color: '#4f46e5', alignItems: 'center' }}>
+                              <span title="Type"><span role="img" aria-label="type">🏷️</span> {uni.type}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div style={{ color: '#888', fontSize: '0.95rem' }}>
-                        Uploaded: {new Date(note.uploadedAt).toLocaleString()}
+                      
+                      {/* Notes Section - shown second when not searching/filtering */}
+                      <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto 3rem auto' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                          <h2 style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', letterSpacing: '-0.5px', margin: 0 }}>
+                            <span role="img" aria-label="notes">📚</span> Notes
+                          </h2>
+                          <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} style={{ padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16, minWidth: 120 }}>
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="az">A–Z</option>
+                            <option value="za">Z–A</option>
+                          </select>
+                        </div>
+                        {sortedNotes.length === 0 ? (
+                          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                            No notes found. Try adjusting your filters or search.
+                          </div>
+                        ) : (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+                            {sortedNotes.map(note => (
+                              <div
+                                className="glass-card"
+                                key={note.uploadedAt + note.fileName}
+                                style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer', position: 'relative' }}
+                                onClick={() => handleNoteClick(note)}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`View details for note ${note.fileName}`}
+                                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleNoteClick(note) }}
+                              >
+                                <div style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--primary)' }}>
+                                  {getFileTypeBadge(note.fileType)}
+                                  {getFileNameWithoutExtension(note.fileName)}
+                                </div>
+                                <div style={{ color: '#232946', fontSize: '1rem' }}>
+                                  <span role="img" aria-label="university">🎓</span> {note.university} &nbsp;|&nbsp;
+                                  <span role="img" aria-label="faculty">🏫</span> {note.faculty} &nbsp;|&nbsp;
+                                  <span role="img" aria-label="subject">📚</span> {note.subject}
+                                </div>
+                                <div style={{ color: '#555', fontSize: '0.98rem' }}>
+                                  <span role="img" aria-label="prof">👨‍🏫</span> {note.professor} &nbsp;|&nbsp;
+                                  <span role="img" aria-label="semester">🗓️</span> {note.semester}
+                                </div>
+                                <div style={{ color: '#888', fontSize: '0.95rem' }}>
+                                  Uploaded: {new Date(note.uploadedAt).toLocaleString()}
+                                </div>
+                                <div style={{ color: '#888', fontSize: '0.95rem' }}>
+                                  Size: {(note.fileSize / 1024).toFixed(1)} KB
+                                </div>
+                                <a href={note.fileData} download={note.fileName} style={{ color: 'var(--secondary)', fontWeight: 500, marginTop: 4, textDecoration: 'underline', fontSize: '1rem' }}>
+                                  Download
+                                </a>
+                                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                                  <button
+                                    onClick={e => { e.stopPropagation(); handleEditNote(note) }}
+                                    style={{
+                                      background: 'none',
+                                      color: '#888',
+                                      border: 'none',
+                                      borderRadius: 4,
+                                      padding: '0.2rem 0.5rem',
+                                      fontWeight: 500,
+                                      fontSize: 13,
+                                      cursor: 'pointer',
+                                      textDecoration: 'underline',
+                                      transition: 'color 0.2s',
+                                    }}
+                                    onMouseOver={e => (e.currentTarget.style.color = 'var(--primary)')}
+                                    onMouseOut={e => (e.currentTarget.style.color = '#888')}
+                                    aria-label={`Edit note ${note.fileName}`}
+                                  >Edit</button>
+                                  <button
+                                    onClick={e => { e.stopPropagation(); handleDeleteNote(note) }}
+                                    style={{
+                                      background: 'none',
+                                      color: '#bbb',
+                                      border: 'none',
+                                      borderRadius: 4,
+                                      padding: '0.2rem 0.5rem',
+                                      fontWeight: 500,
+                                      fontSize: 13,
+                                      cursor: 'pointer',
+                                      textDecoration: 'underline',
+                                      transition: 'color 0.2s',
+                                    }}
+                                    onMouseOver={e => (e.currentTarget.style.color = '#e11d48')}
+                                    onMouseOut={e => (e.currentTarget.style.color = '#bbb')}
+                                    aria-label={`Delete note ${note.fileName}`}
+                                  >Delete</button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {/* Edit Note Modal/Inline Form */}
+                        {editNote && (
+                          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(36,41,70,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="glass-card" style={{ minWidth: 340, maxWidth: 400, padding: '2rem', position: 'relative' }}>
+                              <button onClick={() => setEditNote(null)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#232946' }} aria-label="Close edit note modal">×</button>
+                              <h2 style={{ marginBottom: '1rem', fontWeight: 700, fontSize: '1.2rem', color: 'var(--primary)' }}>
+                                <span role="img" aria-label="edit">✏️</span> Edit Note
+                              </h2>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <label htmlFor="editFileName">File Name</label>
+                                <input id="editFileName" name="fileName" type="text" value={editForm.fileName} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
+                                <label htmlFor="editProfessor">Professor</label>
+                                <input id="editProfessor" name="professor" type="text" value={editForm.professor} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
+                                <label htmlFor="editSemester">Semester/Year</label>
+                                <input id="editSemester" name="semester" type="text" value={editForm.semester} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
+                                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                                  <button onClick={handleEditFormSave} style={{ background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Save</button>
+                                  <button onClick={() => setEditNote(null)} style={{ background: '#e11d48', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {/* Delete Confirmation Modal */}
+                        {showDeleteConfirm && (
+                          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(36,41,70,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="glass-card" style={{ minWidth: 320, maxWidth: 380, padding: '2rem', position: 'relative', textAlign: 'center' }}>
+                              <h2 style={{ marginBottom: '1rem', fontWeight: 700, fontSize: '1.2rem', color: '#e11d48' }}>
+                                <span role="img" aria-label="delete">🗑️</span> Delete Note
+                              </h2>
+                              <div style={{ marginBottom: '1.5rem' }}>Are you sure you want to delete <b>{showDeleteConfirm.fileName}</b>?</div>
+                              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                                <button onClick={confirmDeleteNote} style={{ background: '#e11d48', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Delete</button>
+                                <button onClick={cancelDeleteNote} style={{ background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Cancel</button>
+                              </div>
+                              <button onClick={cancelDeleteNote} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#232946' }} aria-label="Close delete confirmation modal">×</button>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div style={{ color: '#888', fontSize: '0.95rem' }}>
-                        Size: {(note.fileSize / 1024).toFixed(1)} KB
-                      </div>
-                      <a href={note.fileData} download={note.fileName} style={{ color: 'var(--secondary)', fontWeight: 500, marginTop: 4, textDecoration: 'underline', fontSize: '1rem' }}>
-                        Download
-                      </a>
-                      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                        <button
-                          onClick={e => { e.stopPropagation(); handleEditNote(note) }}
-                          style={{
-                            background: 'none',
-                            color: '#888',
-                            border: 'none',
-                            borderRadius: 4,
-                            padding: '0.2rem 0.5rem',
-                            fontWeight: 500,
-                            fontSize: 13,
-                            cursor: 'pointer',
-                            textDecoration: 'underline',
-                            transition: 'color 0.2s',
-                          }}
-                          onMouseOver={e => (e.currentTarget.style.color = 'var(--primary)')}
-                          onMouseOut={e => (e.currentTarget.style.color = '#888')}
-                          aria-label={`Edit note ${note.fileName}`}
-                        >Edit</button>
-                        <button
-                          onClick={e => { e.stopPropagation(); handleDeleteNote(note) }}
-                          style={{
-                            background: 'none',
-                            color: '#bbb',
-                            border: 'none',
-                            borderRadius: 4,
-                            padding: '0.2rem 0.5rem',
-                            fontWeight: 500,
-                            fontSize: 13,
-                            cursor: 'pointer',
-                            textDecoration: 'underline',
-                            transition: 'color 0.2s',
-                          }}
-                          onMouseOver={e => (e.currentTarget.style.color = '#e11d48')}
-                          onMouseOut={e => (e.currentTarget.style.color = '#bbb')}
-                          aria-label={`Delete note ${note.fileName}`}
-                        >Delete</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* Edit Note Modal/Inline Form */}
-              {editNote && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(36,41,70,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="glass-card" style={{ minWidth: 340, maxWidth: 400, padding: '2rem', position: 'relative' }}>
-                    <button onClick={() => setEditNote(null)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#232946' }} aria-label="Close edit note modal">×</button>
-                    <h2 style={{ marginBottom: '1rem', fontWeight: 700, fontSize: '1.2rem', color: 'var(--primary)' }}>
-                      <span role="img" aria-label="edit">✏️</span> Edit Note
-                    </h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                      <label htmlFor="editFileName">File Name</label>
-                      <input id="editFileName" name="fileName" type="text" value={editForm.fileName} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
-                      <label htmlFor="editProfessor">Professor</label>
-                      <input id="editProfessor" name="professor" type="text" value={editForm.professor} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
-                      <label htmlFor="editSemester">Semester/Year</label>
-                      <input id="editSemester" name="semester" type="text" value={editForm.semester} onChange={handleEditFormChange} style={{ padding: '0.75rem', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 16 }} />
-                      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                        <button onClick={handleEditFormSave} style={{ background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Save</button>
-                        <button onClick={() => setEditNote(null)} style={{ background: '#e11d48', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Cancel</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {/* Delete Confirmation Modal */}
-              {showDeleteConfirm && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(36,41,70,0.18)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="glass-card" style={{ minWidth: 320, maxWidth: 380, padding: '2rem', position: 'relative', textAlign: 'center' }}>
-                    <h2 style={{ marginBottom: '1rem', fontWeight: 700, fontSize: '1.2rem', color: '#e11d48' }}>
-                      <span role="img" aria-label="delete">🗑️</span> Delete Note
-                    </h2>
-                    <div style={{ marginBottom: '1.5rem' }}>Are you sure you want to delete <b>{showDeleteConfirm.fileName}</b>?</div>
-                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                      <button onClick={confirmDeleteNote} style={{ background: '#e11d48', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Delete</button>
-                      <button onClick={cancelDeleteNote} style={{ background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 6, padding: '0.5rem 1.2rem', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Cancel</button>
-                    </div>
-                    <button onClick={cancelDeleteNote} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#232946' }} aria-label="Close delete confirmation modal">×</button>
-                  </div>
-                </div>
-              )}
-            </div>
-            {/* Section heading for universities */}
-            <h2 style={{ width: '100%', maxWidth: 1200, margin: '0 auto 1.5rem auto', fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', letterSpacing: '-0.5px' }}>
-              <span role="img" aria-label="university">🎓</span> Universities
-            </h2>
-            {/* University Grid - below notes and filters */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '2rem',
-              width: '100%',
-              maxWidth: '1200px',
-            }}>
-              {universities.map((uni, idx) => (
-                <div
-                  key={uni.name}
-                  className="glass-card"
-                  style={{ padding: '2rem', minHeight: '180px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}
-                  onClick={() => handleUniversityClick(uni)}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`View details for ${uni.name}`}
-                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleUniversityClick(uni) }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '2rem' }} role="img" aria-label="university">🎓</span>
-                    <span style={{ fontWeight: 600, fontSize: '1.25rem' }}>{uni.name}</span>
-                  </div>
-                  <div style={{ color: '#555', fontSize: '1rem', marginBottom: '1rem' }}>{uni.description}</div>
-                  <div style={{ display: 'flex', gap: '1.5rem', fontSize: '1rem', color: '#4f46e5', alignItems: 'center' }}>
-                    <span title="Type"><span role="img" aria-label="type">🏷️</span> {uni.type}</span>
-                  </div>
-                </div>
-              ))}
-      </div>
+                    </>
+                  )}
+                </>
+              );
+            })()}
           </>
         )}
         {page.name === 'university' && renderUniversityDetail(page.university)}

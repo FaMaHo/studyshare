@@ -118,4 +118,4 @@
 - Include technical decisions and rationale
 - Track time spent on tasks
 - Note challenges and solutions
-- Link to relevant documentation 
+- Link to relevant documentation
