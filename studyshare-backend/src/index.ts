@@ -1,12 +1,23 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { PrismaClient } from '../generated/prisma';
+import compression from 'compression';
+import helmet from 'helmet';
 
 const app = express();
 const prisma = new PrismaClient();
 
 app.use(cors());
 app.use(express.json({ limit: '15mb' })); // allow large file uploads
+app.use(compression());
+app.use(helmet());
+// Add custom CSP, COOP, and XFO headers
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src 'self' https://studyshare-api.onrender.com https://studyshare.app; img-src * data:; script-src 'self' 'unsafe-inline' https://studyshare-api.onrender.com; style-src 'self' 'unsafe-inline';");
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('X-Frame-Options', 'DENY');
+  next();
+});
 
 // Health check
 // @ts-expect-error false positive on route handler types

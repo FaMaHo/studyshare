@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import "./App.css";
 import AddNoteModal from "./components/AddNoteModal";
 import { getUniversities, getNotes, addUniversity, addFaculty, addSubject, addNote } from "./api/api";
@@ -904,13 +904,15 @@ function App() {
       </main>
 
       {/* Add Note Modal */}
-      <AddNoteModal
-        open={addNoteOpen}
-        onClose={() => setAddNoteOpen(false)}
-        universities={universities}
-        refreshUniversities={() => getUniversities().then(setUniversities)}
-        refreshNotes={() => getNotes().then(setNotes)}
-      />
+      <Suspense fallback={<div>Loading AddNoteModal...</div>}>
+        <AddNoteModal
+          open={addNoteOpen}
+          onClose={() => setAddNoteOpen(false)}
+          universities={universities}
+          refreshUniversities={() => getUniversities().then(setUniversities)}
+          refreshNotes={() => getNotes().then(setNotes)}
+        />
+      </Suspense>
 
       {/* Footer */}
       <footer style={{ padding: '1.5rem 2rem', textAlign: 'center', color: '#232946', opacity: 0.85 }}>
