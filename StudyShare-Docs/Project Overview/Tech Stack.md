@@ -34,7 +34,7 @@ StudyShare uses a modern, full-stack JavaScript/TypeScript technology stack desi
 ### Database & ORM
 - **Prisma** - Modern database ORM
 - **SQLite** - Lightweight database (development)
-- **PostgreSQL** - Production database (planned)
+- **PostgreSQL (Supabase)** - Production database
 
 ### Development Tools
 - **ESLint** - Code linting

@@ -12,7 +12,7 @@ This document outlines the complete production deployment strategy for StudyShar
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend API   │    │   Database      │
-│   (Vercel)      │◄──►│   (Railway)     │◄──►│   (PostgreSQL)  │
+│   (Vercel)      │◄──►│   (Render)      │◄──►│   (Supabase)    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          │                       │                       │
@@ -28,40 +28,40 @@ This document outlines the complete production deployment strategy for StudyShar
 ### Phase 1: Domain & SSL Setup (Week 1)
 
 #### Domain Registration
-- [ ] Register domain (e.g., studyshare.app)
-- [ ] Configure DNS settings
+- [x] Register domain (e.g., studyshare.app)
+- [x] Configure DNS settings
 - [ ] Set up domain email (optional)
 - [ ] Configure domain privacy protection
 
 #### SSL Certificate
-- [ ] Obtain SSL certificate (Let's Encrypt or paid)
-- [ ] Configure SSL for all subdomains
-- [ ] Set up SSL redirects (HTTP → HTTPS)
-- [ ] Test SSL configuration
+- [x] Obtain SSL certificate (Let's Encrypt or paid)
+- [x] Configure SSL for all subdomains
+- [x] Set up SSL redirects (HTTP → HTTPS)
+- [x] Test SSL configuration
 
 #### DNS Configuration
 ```bash
 # DNS Records
 A     @           → Vercel IP
-CNAME www         → studyshare.vercel.app
-CNAME api         → studyshare-api.railway.app
-CNAME db          → studyshare-db.planetscale.app
+CNAME www         → studyshare-pi.vercel.app
+CNAME api         → studyshare-cebt.onrender.com
+CNAME db          → cjgsmayxqbpnnzfrornk.supabase.co
 ```
 
 ### Phase 2: Database Migration (Week 1-2)
 
 #### PostgreSQL Setup
-- [ ] Set up PostgreSQL database (PlanetScale/Railway)
-- [ ] Configure database connection
-- [ ] Set up database backups
-- [ ] Configure database monitoring
+- [x] Set up PostgreSQL database (Supabase)
+- [x] Configure database connection
+- [x] Set up database backups
+- [x] Configure database monitoring
 
 #### Migration Strategy
 ```sql
 -- Migration from SQLite to PostgreSQL
 -- 1. Export current data
 -- 2. Transform data format
--- 3. Import to PostgreSQL
+-- 3. Import to PostgreSQL (Supabase)
 -- 4. Update connection strings
 -- 5. Test all functionality
 
@@ -75,10 +75,10 @@ datasource db {
 #### Environment Variables
 ```bash
 # Production environment variables
-DATABASE_URL=postgresql://username:password@host:port/database
+DATABASE_URL=your_supabase_postgres_url
 NODE_ENV=production
 FRONTEND_URL=https://studyshare.app
-API_URL=https://api.studyshare.app
+API_URL=https://studyshare-api.onrender.com
 JWT_SECRET=your_jwt_secret
 AWS_ACCESS_KEY_ID=your_aws_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret
@@ -88,12 +88,12 @@ AWS_S3_BUCKET=studyshare-files
 
 ### Phase 3: Backend Deployment (Week 2)
 
-#### Railway Deployment
-- [ ] Set up Railway account and project
-- [ ] Configure environment variables
-- [ ] Deploy backend application
-- [ ] Set up custom domain (api.studyshare.app)
-- [ ] Configure CORS for production domain
+#### Render Deployment
+- [x] Set up Render account and project
+- [x] Configure environment variables
+- [x] Deploy backend application
+- [x] Set up custom domain (studyshare-cebt.onrender.com)
+- [x] Configure CORS for production domain
 
 #### Backend Configuration
 ```javascript
@@ -119,28 +119,28 @@ const config = {
 #### API Endpoints
 ```bash
 # Production API endpoints
-https://api.studyshare.app/api/universities
-https://api.studyshare.app/api/faculties
-https://api.studyshare.app/api/subjects
-https://api.studyshare.app/api/notes
+https://studyshare-cebt.onrender.com/api/universities
+https://studyshare-cebt.onrender.com/api/faculties
+https://studyshare-cebt.onrender.com/api/subjects
+https://studyshare-cebt.onrender.com/api/notes
 ```
 
 ### Phase 4: Frontend Deployment (Week 2)
 
 #### Vercel Deployment
-- [ ] Set up Vercel account and project
-- [ ] Connect GitHub repository
-- [ ] Configure build settings
-- [ ] Set up custom domain (studyshare.app)
-- [ ] Configure environment variables
+- [x] Set up Vercel account and project
+- [x] Connect GitHub repository
+- [x] Configure build settings
+- [x] Set up custom domain (studyshare-pi.vercel.app)
+- [x] Configure environment variables
 
 #### Frontend Configuration
 ```javascript
 // Production API configuration
-const API_BASE_URL = 'https://api.studyshare.app/api';
+const API_BASE_URL = 'https://studyshare-api.onrender.com/api';
 
 // Environment variables
-VITE_API_URL=https://api.studyshare.app
+VITE_API_URL=https://studyshare-api.onrender.com
 VITE_APP_NAME=StudyShare
 VITE_APP_VERSION=1.0.0
 ```
@@ -274,14 +274,13 @@ const cacheRules = {
 
 ### Backend Deployment
 ```bash
-# Deploy to Railway
-railway login
-railway link
-railway up
+# Deploy to Render
+# (Assuming you have set up your Render service and connected your repo)
+git push render main
+# Or use the Render dashboard to trigger a deploy
 
-# Set environment variables
-railway variables set DATABASE_URL=postgresql://...
-railway variables set NODE_ENV=production
+# Set environment variables in the Render dashboard
+# DATABASE_URL, NODE_ENV, etc.
 ```
 
 ### Frontend Deployment

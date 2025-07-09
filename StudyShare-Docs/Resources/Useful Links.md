@@ -117,20 +117,24 @@
 ## 🎯 StudyShare Specific
 
 ### Repository Links
-- **GitHub Repository**: https://github.com/yourusername/studyshare
-- **Issues**: https://github.com/yourusername/studyshare/issues
-- **Pull Requests**: https://github.com/yourusername/studyshare/pulls
-- **Actions**: https://github.com/yourusername/studyshare/actions
+- **GitHub Repository**: https://github.com/FaMaHo/studyshare
+- **Issues**: https://github.com/FaMaHo/studyshare/issues
+- **Pull Requests**: https://github.com/FaMaHo/studyshare/pulls
+- **Actions**: https://github.com/FaMaHo/studyshare/actions
 
 ### Deployment Links
-- **Frontend**: https://studyshare.vercel.app (planned)
-- **Backend**: https://studyshare-api.railway.app (planned)
-- **Database**: https://studyshare-db.planetscale.app (planned)
+- **Frontend**: https://studyshare-pi.vercel.app (live)
+- **Backend**: https://studyshare-cebt.onrender.com (live)
+- **Database**: https://cjgsmayxqbpnnzfrornk.supabase.co (live)
 
 ### Documentation Links
-- **API Documentation**: https://studyshare-api.railway.app/docs (planned)
-- **Storybook**: https://studyshare.vercel.app/storybook (planned)
+- **API Documentation**: https://studyshare-cebt.onrender.com/docs (live)
+- **Storybook**: https://studyshare-pi.vercel.app/storybook (planned)
 - **Status Page**: https://status.studyshare.app (planned)
+- **README.md**: studyshare/README.md
+- **API.md**: studyshare/docs/API.md
+- **DEVELOPMENT.md**: studyshare/docs/DEVELOPMENT.md
+- **PROJECT_SUMMARY.md**: studyshare/PROJECT_SUMMARY.md
 
 ## 📝 Notes
 
