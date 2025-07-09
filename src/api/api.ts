@@ -1,4 +1,4 @@
-const API_URL = 'https://studyshare-cebt.onrender.com';
+const API_URL = 'https://studyshare-cebt.onrender.com/api';
 
 export async function getUniversities() {
   try {
